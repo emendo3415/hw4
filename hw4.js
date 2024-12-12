@@ -1,8 +1,8 @@
  /*
    Name: Edith Mendoza
     Date created: 09/20/2024
-    Date last updated: 09/21/2024
-    Purpose: Homework 1 JS
+    Date last updated: 12/04/2024
+    Purpose: Homework 4 JS
     */
 
     //dynamic date js code//
@@ -555,81 +555,65 @@ function validateEverything()
     }
 }
 
-//cookie for remembering info input form//
-function setCookie (name, cvalue, expiryDays) 
-{
+function setCookie(name, cvalue, expiryDays) {
     var day = new Date();
-    day.setTime(day.getTime() + (expiryDays*24*60*60*1000));
+    day.setTime(day.getTime() + expiryDays * 24 * 60 * 60 * 1000);
     var expires = "expires=" + day.toUTCString();
     document.cookie = name + "=" + cvalue + ";" + expires + ";path=/";
 }
 
-function getCookie (name)
-{
+function getCookie(name) {
     var cookieName = name + "=";
-    var cookies = document.cookie.split(';');
+    var cookies = document.cookie.split(";");
 
-    for (var i = 0; i <cookies.length; i++)
-    {
+    for (var i = 0; i < cookies.length; i++) {
         var cookie = cookies[i].trim();
-        while (cookie.charAt(0) == '')
-        {
-            cookie = cookie.substring(1);
-        }
-        if (cookie.indexOf(cookieName) == 0) 
-        {
+        if (cookie.indexOf(cookieName) == 0) {
             return cookie.substring(cookieName.length, cookie.length);
         }
     }
-    return " ";
+    return ""; // Return empty string instead of " "
 }
 
-var inputs= 
-[
-    {id:"fname", cookieName: "firstName"},
-    {id:"mini", cookieName: "middleInitial"},
-    {id:"lname", cookieName: "lastName"},
-    {id:"dob", cookieName: "dob"},
-    {id:"ssn", cookieName: "ssn"},
-    {id:"address1", cookieName: "address1"},
-    {id:"city", cookieName: "city"},
-    {id:"email", cookieName: "email"},
-    {id:"uname", cookieName: "userName"},
+var inputs = [
+    { id: "fname", cookieName: "firstName" },
+    { id: "mini", cookieName: "middleInitial" },
+    { id: "lname", cookieName: "lastName" },
+    { id: "dob", cookieName: "dob" },
+    { id: "ssn", cookieName: "ssn" },
+    { id: "address1", cookieName: "address1" },
+    { id: "city", cookieName: "city" },
+    { id: "email", cookieName: "email" },
+    { id: "uname", cookieName: "userName" },
 ];
 
-inputs.forEach(function(input)
-{
+inputs.forEach(function (input) {
     var inputElement = document.getElementById(input.id);
+    if (inputElement) {
+        // Prefill input fields with value from the cookie
+        var cookieValue = getCookie(input.cookieName);
+        if (cookieValue !== "") {
+            inputElement.value = cookieValue;
+        }
 
-    //prefill input fields with value from the cookie
-    var cookieValue = getCookie(input.cookieName);
-    if (cookieValue !==" ")
-    {
-        inputElement.value = cookieValue;
+        // Set a cookie with the input value when the input field changes
+        inputElement.addEventListener("input", function () {
+            setCookie(input.cookieName, inputElement.value, 30);
+        });
     }
-
-    //set a cookie with the input value when the input field changes
-    inputElement.addEventListener("input", function()
-    {
-        setCookie(input.cookieName, inputElement.value, 30);
-    });
 });
 
-//greet the user with their name + message if the cookie isi set
+// Greet the user with their name + message if the cookie is set
 var firstName = getCookie("firstName");
-if (firstName !== " ")
-{
-    document.getElementById("welcome1").innerHTML = "Welcome back," + firstName + "! </br";
+if (firstName !== "") {
+    document.getElementById("welcome1").innerHTML = "Welcome back, " + firstName + "! <br>";
     document.getElementById("welcome2").innerHTML =
-    "<a href='#' id='new-user'>Not " + 
-    firstName + 
-    "? Click here to start a new form. </a>";
-    
-    document.getElementById("new-user").addEventListener("click", function()
-    {
-        inputs.forEach(function(input)
-        {
-            setCookie(input.cookieName,"", -1);
+        "<a href='#' id='new-user'>Not " + firstName + "? Click here to start a new form. </a>";
+
+    // Attach event listener after creating the element
+    document.querySelector("#new-user").addEventListener("click", function () {
+        inputs.forEach(function (input) {
+            setCookie(input.cookieName, "", -1);
         });
         location.reload();
     });
